@@ -816,11 +816,7 @@ sudo apt update && sudo apt upgrade -y
 sudo /usr/local/bin/admuser.sh
 ```
 
-Показать всех пользователей
-
-```bash
-sudo /usr/local/bin/admuser.sh  # затем пункт 4
-```
+Показать всех пользователей (пункт 4)
 
 Экспорт отчёта о пользователях (пункт 12)
 >⚠️ Отчёт сохранится в /root/users_report_*.txt)
@@ -828,6 +824,7 @@ sudo /usr/local/bin/admuser.sh  # затем пункт 4
 ```bash
 sudo /usr/local/bin/admuser.sh
 ```
+
 Заблокировать пользователя (пункт 7)
 
 Разблокировать (пункт 8)

@@ -683,7 +683,13 @@ sudo whoami
 
 ```bash
 sudo su -
+```
+
+```bash
 whoami
+```
+
+```bash
 exit
 ```
 
@@ -697,6 +703,9 @@ sudo ufw status verbose
 
 ```bash
 sudo fail2ban-client status
+```
+
+```bash
 sudo fail2ban-client status sshd
 ```
 
@@ -801,15 +810,24 @@ sudo apt update && sudo apt upgrade -y
 
 ### Полезные команды для управления скриптом admuser.sh
 
+Запуск скрипта
+
 ```bash
-# Запуск скрипта
 sudo /usr/local/bin/admuser.sh
+```
 
-# Показать всех пользователей
+Показать всех пользователей
+
+```bash
 sudo /usr/local/bin/admuser.sh  # затем пункт 4
+```
 
-# Экспорт отчёта о пользователях
-sudo /usr/local/bin/admuser.sh  # затем пункт 12
+Экспорт отчёта о пользователях (пункт 12)
+
+```bash
+sudo /usr/local/bin/admuser.sh
+```
+
 # Отчёт сохранится в /root/users_report_*.txt
 
 # Заблокировать пользователя (пункт 7)
@@ -821,7 +839,13 @@ sudo /usr/local/bin/admuser.sh  # затем пункт 12
 
 ```bash
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+```
+
+```bash
 sudo cp /etc/default/ufw /etc/default/ufw.backup
+```
+
+```bash
 sudo cp /etc/fail2ban/jail.local /etc/fail2ban/jail.local.backup 2>/dev/null || true
 ```
 
@@ -830,11 +854,19 @@ sudo cp /etc/fail2ban/jail.local /etc/fail2ban/jail.local.backup 2>/dev/null || 
 Если вы потеряли доступ через SSH:
 1. Зайдите через консоль VPS/KVM
 2. Восстановите настройки:
-```bash
-# Вернуть SSH на порт 22
-sudo cp /etc/ssh/sshd_config.backup /etc/ssh/sshd_config
-sudo systemctl restart sshd
 
-# Отключить фаервол
+Вернуть SSH на порт 22
+
+```bash
+sudo cp /etc/ssh/sshd_config.backup /etc/ssh/sshd_config
+```
+
+```bash
+sudo systemctl restart sshd
+```
+
+Отключить фаервол
+
+```bash
 sudo ufw disable
 ```

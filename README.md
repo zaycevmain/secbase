@@ -33,6 +33,11 @@
 Создайте файл скрипта:
 
 ```bash
+nano /usr/local/bin/admuser.sh
+```
+Добавьте содержимое:
+
+```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -470,9 +475,11 @@ sudo chmod +x /usr/local/bin/admuser.sh
 
 ## Часть 2. Создание административного пользователя
 
-```bash
 # Запускаем скрипт от root
+
+```bash
 sudo /usr/local/bin/admuser.sh
+```
 
 # В скрипте:
 # Выбрать пункт 1 (Создать пользователя)
@@ -484,6 +491,7 @@ sudo /usr/local/bin/admuser.sh
 # Выйти из скрипта (пункт 0)
 
 # Выход из root и вход под новым пользователем
+```bash
 exit
 ssh admin@<IP-адрес-сервера>
 ```

@@ -533,8 +533,9 @@ ClientAliveCountMax 2
 sudo sshd -t
 ```
 
+Перезапускаем SSH
+
 ```bash
-# Перезапускаем SSH
 sudo systemctl restart sshd
 ```
 
@@ -553,37 +554,50 @@ sudo systemctl restart sshd
 
 ## Часть 4. Проверка SSH (в новом терминале)
 
+Проверка входа на новом порту
+
 ```bash
-# Проверка входа на новом порту
 ssh admin@<IP-адрес-сервера> -p 7722
+```
 
-# Проверка запрета root
+Проверка запрета root - Должен отказать (Permission denied)
+
+```bash
 ssh root@<IP-адрес-сервера> -p 7722
-# Должен отказать (Permission denied)
+```
 
-# Проверка запрета пароля
+Проверка запрета пароля - Должен отказать
+
+```bash
 ssh -o PreferredAuthentications=password admin@<IP-адрес-сервера> -p 7722
-# Должен отказать
 ```
 
 ---
 
 ## Часть 5. Настройка фаервола (UFW)
 
+Разрешаем нужные порты
+
 ```bash
-# Разрешаем нужные порты
 sudo ufw allow 7722/tcp
 sudo ufw allow 8081/tcp
 sudo ufw allow 443/tcp
 # sudo ufw allow 80/tcp   # не рекомендуется
+```
 
-# Включаем фаервол
+Включаем фаервол
+
+```bash
 sudo ufw enable
+```
 
-# Проверяем
+Проверяем
+```bash
 sudo ufw status numbered
+```
 
-# Перезагружаем сервер
+Перезагружаем сервер
+```bash
 sudo reboot
 ```
 
@@ -596,13 +610,29 @@ sudo reboot
 >⚠️Важно! Если сетью упраляет сторонняя организация и пробросы портов/маршрутизаци/DHCP и пр. выполнены не корректно - все входящие подключения могут быть для сервера под одним IP - например под IP маршрутизатора.
 Поэтому блокировка fail2ban может спровоцировать полную блокировку доступа из вне.
 
+Установка
+
 ```bash
-# Установка
 sudo apt update
 sudo apt install fail2ban -y
+```
 
-# Создаём конфиг для SSH на порту 7722
-sudo tee /etc/fail2ban/jail.d/ssh-custom.conf << 'EOF'
+Создаём конфиг для SSH на порту 7722
+
+```bash
+sudo touch /etc/fail2ban/jail.d/ssh-custom.conf
+```
+
+
+Откройте файл через редактор (например nano):
+
+```bash
+sudo nano /etc/fail2ban/jail.d/ssh-custom.conf
+```
+
+Добавьте содержимое:
+
+```bash
 [sshd]
 enabled = true
 port = 7722
@@ -611,13 +641,18 @@ logpath = /var/log/auth.log
 maxretry = 3
 bantime = 3600
 findtime = 600
-EOF
+```
 
-# Запускаем fail2ban
+Запускаем fail2ban
+
+```bash
 sudo systemctl restart fail2ban
 sudo systemctl enable fail2ban
+```
 
-# Проверяем статус
+Проверяем статус
+
+```bash
 sudo fail2ban-client status sshd
 ```
 

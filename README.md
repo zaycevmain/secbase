@@ -33,8 +33,15 @@
 Создайте файл скрипта:
 
 ```bash
+touch /usr/local/bin/admuser.sh
+```
+
+Откройте файл через редактор (например nano):
+
+```bash
 nano /usr/local/bin/admuser.sh
 ```
+
 Добавьте содержимое:
 
 ```bash
@@ -465,7 +472,7 @@ while true; do
 done
 ```
 
-# Делаем скрипт исполняемым
+Делаем скрипт исполняемым
 
 ```bash
 sudo chmod +x /usr/local/bin/admuser.sh
@@ -481,7 +488,7 @@ sudo chmod +x /usr/local/bin/admuser.sh
 sudo /usr/local/bin/admuser.sh
 ```
 
-# В скрипте:
+  В скрипте:
 - Выбрать пункт 1 (Создать пользователя)
 - Ввести имя (например admin)
 - Добавить в sudo? y
@@ -489,7 +496,7 @@ sudo /usr/local/bin/admuser.sh
 - Сгенерировать SSH-ключи? n
 - Выйти из скрипта (пункт 0)
 
-# Выход из root и вход под новым пользователем
+Выход из root и вход под новым пользователем
 
 ```bash
 exit
@@ -500,11 +507,15 @@ ssh admin@<IP-адрес-сервера>
 
 ## Часть 3. Настройка SSH (безопасность)
 
-```bash
-# Редактируем конфиг
-sudo nano /etc/ssh/sshd_config
+Редактируем конфиг
 
-# Меняем/добавляем строки:
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Меняем/добавляем строки:
+
+```bash
 Port 7722
 PermitRootLogin no
 PasswordAuthentication no
@@ -514,10 +525,15 @@ MaxAuthTries 3
 MaxSessions 4
 ClientAliveInterval 300
 ClientAliveCountMax 2
+```
 
-# Проверяем синтаксис
+Проверяем синтаксис
+
+```bash
 sudo sshd -t
+```
 
+```bash
 # Перезапускаем SSH
 sudo systemctl restart sshd
 ```

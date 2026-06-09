@@ -667,22 +667,35 @@ fail2ban + `MaxAuthTries 3` в SSH дают двойную защиту.
 
 ## Часть 7. Итоговая проверка
 
+Заходим на сервер
+
 ```bash
-# Заходим на сервер
 ssh admin@<IP-адрес-сервера> -p 7722
+```
 
-# Проверяем sudo
-sudo whoami                    # должно вернуть root
+Проверяем sudo - должно вернуть root
 
-# Проверяем переключение в root
+```bash
+sudo whoami
+```
+
+Проверяем переключение в root - должно вернуть root
+
+```bash
 sudo su -
-whoami                         # должно вернуть root
+whoami
 exit
+```
 
-# Проверяем статус фаервола
+Проверяем статус фаервола
+
+```bash
 sudo ufw status verbose
+```
 
-# Проверяем статус fail2ban
+Проверяем статус fail2ban
+
+```bash
 sudo fail2ban-client status
 sudo fail2ban-client status sshd
 ```
@@ -693,51 +706,91 @@ sudo fail2ban-client status sshd
 
 **Почему отключают:** автоматические обновления могут перезапустить сервисы (nginx, Docker, базы данных) в неподходящий момент или сломать совместимость.
 
+Создайте файл скрипта:
+
 ```bash
-# Создаём и запускаем скрипт отключения
-cat << 'SCRIPT' | sudo bash
+touch /usr/local/bin/off-update.sh
+```
+
+Откройте файл через редактор (например nano):
+
+```bash
+nano /usr/local/bin/off-update.sh
+```
+
+Добавьте содержимое:
+
+```bash
 #!/bin/sh
 set -e
 
 echo "== Отключаем unattended-upgrades =="
-systemctl disable --now unattended-upgrades 2>/dev/null || true
+
+sudo systemctl disable --now unattended-upgrades 2>/dev/null || true
 
 echo "== Отключаем apt timers =="
-systemctl disable --now apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
+
+sudo systemctl disable --now apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
 
 echo "== Маскируем службы =="
-systemctl mask unattended-upgrades.service apt-daily.timer apt-daily-upgrade.timer 2>/dev/null || true
 
-echo "== Настройка APT =="
+sudo systemctl mask unattended-upgrades.service \
+    apt-daily.timer \
+    apt-daily-upgrade.timer 2>/dev/null || true
+
+echo "== Настройка APT автообновлений =="
+
 CONF="/etc/apt/apt.conf.d/20auto-upgrades"
+
 if [ -f "$CONF" ]; then
-    sed -i 's/"1"/"0"/g' "$CONF"
+    sudo sed -i 's/"1"/"0"/g' "$CONF"
 else
-    cat << 'EOFCONF' > "$CONF"
+    echo "Создаём $CONF"
+    cat <<EOF | sudo tee "$CONF" >/dev/null
 APT::Periodic::Update-Package-Lists "0";
 APT::Periodic::Download-Upgradeable-Packages "0";
 APT::Periodic::AutocleanInterval "0";
 APT::Periodic::Unattended-Upgrade "0";
-EOFCONF
+EOF
 fi
 
 echo "== Удаление unattended-upgrades =="
-apt purge -y unattended-upgrades 2>/dev/null || true
-apt autoremove -y
+
+sudo apt purge -y unattended-upgrades 2>/dev/null || true
+sudo apt autoremove -y
+
+echo "== Проверка Docker =="
+
+if command -v docker >/dev/null 2>&1; then
+    echo "Docker найден"
+    sudo systemctl disable --now docker.timer 2>/dev/null || true
+fi
 
 echo "== Отключаем snap автообновления =="
+
 if command -v snap >/dev/null 2>&1; then
-    systemctl disable --now snapd.refresh.timer 2>/dev/null || true
-    systemctl mask snapd.refresh.timer 2>/dev/null || true
-    snap set system refresh.disabled=true || true
+    sudo systemctl disable --now snapd.refresh.timer 2>/dev/null || true
+    sudo systemctl mask snapd.refresh.timer 2>/dev/null || true
+
+    sudo snap set system refresh.disabled=true || true
+    sudo snap get system refresh.disabled || true
 fi
 
 echo "== Проверка таймеров =="
-systemctl list-timers | grep -E "apt|snap|unattended|update|upgrade" || echo "OK: все таймеры отключены"
-SCRIPT
+
+systemctl list-timers | grep -E "apt|snap|unattended|update|upgrade" || echo "OK: таймеры не найдены"
+
+echo "== Проверка статусов =="
+
+systemctl status unattended-upgrades 2>&1 | grep -E "Active|Loaded" || true
+systemctl status apt-daily.timer 2>&1 | grep "Active" || true
+systemctl status snapd.refresh.timer 2>&1 | grep "Active" || true
+
+echo "== Готово =="
 ```
 
 **Важно:** После отключения автообновлений обновления нужно ставить вручную:
+
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```

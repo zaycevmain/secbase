@@ -823,7 +823,7 @@ sudo /usr/local/bin/admuser.sh  # затем пункт 4
 ```
 
 Экспорт отчёта о пользователях (пункт 12)
-*Отчёт сохранится в /root/users_report_*.txt)
+>⚠️ Отчёт сохранится в /root/users_report_*.txt)
 
 ```bash
 sudo /usr/local/bin/admuser.sh

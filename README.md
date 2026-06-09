@@ -33,7 +33,6 @@
 Создайте файл скрипта:
 
 ```bash
-cat > /user/local/bin/admuser.sh << 'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -459,7 +458,6 @@ while true; do
     *) echo "Неизвестный пункт."; pause ;;
   esac
 done
-EOF
 ```
 
 # Делаем скрипт исполняемым

@@ -502,7 +502,7 @@ PasswordAuthentication no
 ChallengeResponseAuthentication no
 PubkeyAuthentication yes
 MaxAuthTries 3
-MaxSessions 2
+MaxSessions 4
 ClientAliveInterval 300
 ClientAliveCountMax 2
 

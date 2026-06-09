@@ -33,7 +33,7 @@
 Создайте файл скрипта:
 
 ```bash
-sudo tee /usr/local/bin/admuser.sh << 'EOF'
+cat > /user/local/bin/admuser.sh << 'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -460,8 +460,11 @@ while true; do
   esac
 done
 EOF
+```
 
 # Делаем скрипт исполняемым
+
+```bash
 sudo chmod +x /usr/local/bin/admuser.sh
 ```
 
